@@ -1,0 +1,27 @@
+# dependencies
+/node_modules
+/client/node_modules
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+
+*.iml
+.idea
+.eslintcache
+
+*.http
+
+# База монго дб
+/data
+
+*.tar
+notes.md
