@@ -49,19 +49,19 @@ export default function AddItemModal({ visible, setVisible }) {
           >
             <Form {...layout}>
               <Form.Item
-                name="saleType"
+                name="product"
                 label="Вид лицензии"
-                validateStatus={errors.saleType && "error"}
+                validateStatus={errors.product && "error"}
               >
                 <Select
                   placeholder="Выберите вид лицензии"
                   disabled={isSubmitting}
-                  onChange={(value) => setFieldValue("saleType", value)}
-                  value={values.saleType}
+                  onChange={(value) => setFieldValue("product", value)}
+                  value={values.product}
                 >
-                  {LICENSE_TYPES.map((saleType) => (
-                    <Option key={saleType} value={saleType}>
-                      {saleType}
+                  {LICENSE_TYPES.map((product) => (
+                    <Option key={product} value={product}>
+                      {product}
                     </Option>
                   ))}
                 </Select>

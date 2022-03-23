@@ -1,0 +1,11 @@
+{
+  "port": 5000,
+  "mongoDbUri": "mongodb+srv://dbadmin:TlyiIdWNT4jFqgHw@cluster0.tlvfk.mongodb.net/crmTestDatabase?retryWrites=true&w=majority",
+  "mongoConfig": {
+    "useNewUrlParser": true,
+    "useUnifiedTopology": true,
+    "useCreateIndex": true
+  },
+  "mongoDbName": "leaderTask",
+  "jwtSecret": "ujndba4lsl43st3b"
+}

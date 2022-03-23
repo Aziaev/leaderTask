@@ -1,0 +1,45 @@
+{
+  "name": "leader-task",
+  "version": "0.1.0",
+  "description": "LeaderTask sales analyse app",
+  "main": "backend/app.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node backend/app.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon backend/app.js",
+    "client": "npm run start --prefix client",
+    "client:install": "npm install --prefix client",
+    "client:build": "npm run build --prefix client",
+    "install:all": "npm run client:install && npm install",
+    "docker:build": "docker build --tag leadertask .",
+    "heroku_container:push": "heroku container:push web --app tranquil-gorge-47875",
+    "heroku_container:release": "heroku container:release web --app tranquil-gorge-47875",
+    "heroku:open": "heroku open --app tranquil-gorge-47875"
+  },
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "config": "3.3.6",
+    "cross-env": "7.0.3",
+    "date-fns": "2.28.0",
+    "express": "4.17.1",
+    "express-validator": "6.12.1",
+    "json2csv": "5.0.7",
+    "jsonwebtoken": "8.5.1",
+    "lodash": "4.17.21",
+    "mongoose": "5.13.7",
+    "path": "0.12.7",
+    "shortid": "2.2.16"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.179",
+    "concurrently": "6.2.1",
+    "nodemon": "2.0.12",
+    "prettier": "2.5.1"
+  },
+  "author": "Artur Ziaev <aziaev@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sergeiwerty/crm-prototype/issues"
+  },
+  "homepage": "https://github.com/sergeiwerty/crm-prototype#readme"
+}

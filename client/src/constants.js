@@ -1,5 +1,5 @@
 export const CREATE_ITEM_INITIAL_VALUES = {
-  saleType: "",
+  product: "",
   date: new Date().toISOString().split("T")[0],
   profit: "",
   price: "",

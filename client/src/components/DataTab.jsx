@@ -20,8 +20,8 @@ export default function DataTab() {
     () => [
       {
         title: "Вид продажи",
-        dataIndex: "saleType",
-        key: "saleType",
+        dataIndex: "product",
+        key: "product",
       },
       {
         title: "Дата продажи",

@@ -129,7 +129,7 @@ export default function StatTab() {
   const data = useMemo(() => {
     const licensesCount = LICENSE_TYPES.reduce((result, license) => {
       const filteredLicenses = mockData.filter(
-        ({ saleType }) => saleType === license
+        ({ product }) => product === license
       );
 
       return [...result, filteredLicenses.length];
@@ -165,7 +165,7 @@ export default function StatTab() {
 
   return (
     <>
-      <div style={{ textAlign: "center" }}>
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
         <h1>Анализ популярности продуктов</h1>
       </div>
       <Row>
@@ -173,7 +173,7 @@ export default function StatTab() {
           <Pie data={data} />
         </Col>
       </Row>
-      <div style={{ textAlign: "center" }}>
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
         <h1>Анализ выручки и прибыли</h1>
       </div>
       <Row>
