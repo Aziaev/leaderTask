@@ -1,5 +1,6 @@
 import { Tabs } from "antd";
 import DataTab from "./DataTab";
+import StatTab from "./StatTab";
 
 export default function Content() {
   return (
@@ -8,7 +9,7 @@ export default function Content() {
         <DataTab />
       </Tabs.TabPane>
       <Tabs.TabPane tab="Статистика" key="2">
-        Статистика
+        <StatTab />
       </Tabs.TabPane>
     </Tabs>
   );

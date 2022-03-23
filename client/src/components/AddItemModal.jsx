@@ -1,6 +1,6 @@
 import { Form, Input, Modal, Select } from "antd";
 import { Formik } from "formik";
-import { CREATE_ITEM_INITIAL_VALUES, SALE_TYPES } from "../constants";
+import { CREATE_ITEM_INITIAL_VALUES, LICENSE_TYPES } from "../constants";
 import validationSchema from "../validation";
 
 const { Option } = Select;
@@ -59,7 +59,7 @@ export default function AddItemModal({ visible, setVisible }) {
                   onChange={(value) => setFieldValue("saleType", value)}
                   value={values.saleType}
                 >
-                  {SALE_TYPES.map((saleType, index) => (
+                  {LICENSE_TYPES.map((saleType) => (
                     <Option key={saleType} value={saleType}>
                       {saleType}
                     </Option>
@@ -96,8 +96,9 @@ export default function AddItemModal({ visible, setVisible }) {
                 <Input
                   disabled={isSubmitting}
                   type="date"
+                  name="date"
                   placeholder="Укажите дату продажи"
-                  onChange={(value) => setFieldValue("date", value)}
+                  onChange={handleChange}
                   value={values.date}
                 />
               </Form.Item>

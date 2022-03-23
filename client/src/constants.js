@@ -5,7 +5,7 @@ export const CREATE_ITEM_INITIAL_VALUES = {
   price: "",
 };
 
-export const SALE_TYPES = [
+export const LICENSE_TYPES = [
   "Неограниченная лицения",
   "Персональная лицензия",
   "Лицензия на 2-х пользователей",
