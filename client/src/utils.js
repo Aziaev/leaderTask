@@ -1,6 +1,8 @@
-import {format, isValid, parseJSON} from "date-fns";
+import { format, isValid, parseJSON } from "date-fns";
+import { get } from "lodash";
 
-export function formatMoney(amount) {
+export function formatNumberDecimalMoney(numberDecimal) {
+  const amount = get(numberDecimal, "$numberDecimal");
   if (!amount) {
     return 0;
   }

@@ -1,6 +1,6 @@
 {
   "port": 5000,
-  "mongoDbUri": "mongodb+srv://dbadmin:TlyiIdWNT4jFqgHw@cluster0.tlvfk.mongodb.net/crmTestDatabase?retryWrites=true&w=majority",
+  "mongoDbUri": "mongodb+srv://dbadmin:TlyiIdWNT4jFqgHw@cluster0.tlvfk.mongodb.net/leaderTask?retryWrites=true&w=majority",
   "mongoConfig": {
     "useNewUrlParser": true,
     "useUnifiedTopology": true,

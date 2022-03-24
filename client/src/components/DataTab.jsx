@@ -1,20 +1,25 @@
 import { CloseOutlined } from "@ant-design/icons";
-import { Button, Row, Table } from "antd";
+import { Button, Row, Spin, Table } from "antd";
 import { useCallback, useMemo, useState } from "react";
-import mockData from "../mockData.json";
-import { formatDateToString, formatMoney } from "../utils";
+import { useAppContext } from "../AppContext";
+import { formatDateToString, formatNumberDecimalMoney } from "../utils";
 import AddItemModal from "./AddItemModal";
 
 export default function DataTab() {
   const [visible, setVisible] = useState(false);
 
+  const { products, isLoading, deleteProduct } = useAppContext();
+
   function addButtonClickHandler() {
     setVisible(true);
   }
 
-  const deleteButtonClick = useCallback((e) => {
-    console.log(e.currentTarget.id);
-  }, []);
+  const deleteButtonClick = useCallback(
+    async (e) => {
+      await deleteProduct(e.currentTarget.id);
+    },
+    [deleteProduct]
+  );
 
   const columns = useMemo(
     () => [
@@ -32,25 +37,25 @@ export default function DataTab() {
       },
       {
         title: "Цена",
-        dataIndex: "profit",
-        key: "profit",
+        dataIndex: "price",
+        key: "price",
         width: 120,
         render: (value) => {
           return (
             <div style={{ display: "block", textAlign: "end" }}>
-              {formatMoney(value)}
+              {formatNumberDecimalMoney(value)}
             </div>
           );
         },
       },
       {
         title: "Прибыль",
-        dataIndex: "price",
-        key: "price",
+        dataIndex: "profit",
+        key: "profit",
         width: 120,
         render: (value) => (
           <div style={{ display: "block", textAlign: "end" }}>
-            {formatMoney(value)}
+            {formatNumberDecimalMoney(value)}
           </div>
         ),
       },
@@ -83,12 +88,13 @@ export default function DataTab() {
         </Button>
       </Row>
       <Table
-        dataSource={mockData}
+        dataSource={products}
         columns={columns}
         pagination={false}
         size="small"
         rowKey="_id"
         scroll={{ y: 600 }}
+        loading={isLoading}
       />
       <AddItemModal visible={visible} setVisible={setVisible} />
     </>

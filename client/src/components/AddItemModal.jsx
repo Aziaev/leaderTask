@@ -1,5 +1,6 @@
 import { Form, Input, Modal, Select } from "antd";
 import { Formik } from "formik";
+import { useAppContext } from "../AppContext";
 import { CREATE_ITEM_INITIAL_VALUES, LICENSE_TYPES } from "../constants";
 import validationSchema from "../validation";
 
@@ -11,8 +12,10 @@ const layout = {
 };
 
 export default function AddItemModal({ visible, setVisible }) {
-  function onSubmit(values, { resetForm }) {
-    console.log(values);
+  const { addProduct } = useAppContext();
+
+  async function onSubmit(values, { resetForm }) {
+    await addProduct(values);
     resetForm();
     setVisible(false);
   }
