@@ -14,9 +14,10 @@ const layout = {
 export default function AddItemModal({ visible, setVisible }) {
   const { addProduct } = useAppContext();
 
-  async function onSubmit(values, { resetForm }) {
+  async function onSubmit(values, { resetForm, ...rest }) {
+    console.log(rest);
     await addProduct(values);
-    resetForm();
+    resetForm(CREATE_ITEM_INITIAL_VALUES);
     setVisible(false);
   }
 

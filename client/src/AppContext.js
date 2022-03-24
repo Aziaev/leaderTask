@@ -1,5 +1,6 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
 import { message } from "antd";
+import { get } from "lodash";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 
 export const AppContext = React.createContext();
 
@@ -10,8 +11,10 @@ export const useAppContext = () => {
 export const AppContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState([]);
+  const [popularityReport, setPopularityReport] = useState([]);
+  const [revenueReport, setRevenueReport] = useState([]);
 
-  const fetchProducts = useCallback(async (token) => {
+  const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     try {
       const headers = {
@@ -25,9 +28,7 @@ export const AppContextProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        if (response.status === 401) {
-          message.error(response.error);
-        }
+        return await handleNotOkReponse(response);
       }
       const json = await response.json();
 
@@ -42,6 +43,73 @@ export const AppContextProvider = ({ children }) => {
       setIsLoading(false);
     }
   }, []);
+
+  const fetchPopularityReport = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      const url = "/api/products/report/popularity";
+      const response = await fetch(url, {
+        method: "GET",
+        headers,
+      });
+
+      if (!response.ok) {
+        return await handleNotOkReponse(response);
+      }
+      const json = await response.json();
+
+      setPopularityReport(json.data.report);
+    } catch (e) {
+      message.error(e.message || "Неизвестная ошибка получения лидов");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const fetchRevenueReport = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      const url = "/api/products/report/revenue";
+      const response = await fetch(url, {
+        method: "GET",
+        headers,
+      });
+
+      if (!response.ok) {
+        return await handleNotOkReponse(response);
+      }
+
+      const json = await response.json();
+
+      setRevenueReport(json.data.report);
+    } catch (e) {
+      message.error(e.message || "Неизвестная ошибка получения лидов");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const fetchAll = useCallback(async () => {
+    try {
+      await Promise.all([
+        fetchProducts(),
+        fetchRevenueReport(),
+        fetchPopularityReport(),
+      ]);
+    } catch (e) {
+      message.error(e.message || "Ошибка инициализации приложения");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchProducts, fetchRevenueReport, fetchPopularityReport]);
 
   const addProduct = useCallback(
     async (product) => {
@@ -59,9 +127,7 @@ export const AppContextProvider = ({ children }) => {
         });
 
         if (!response.ok) {
-          if (response.status === 401) {
-            message.error(response.error);
-          }
+          return await handleNotOkReponse(response);
         }
         const json = await response.json();
 
@@ -69,10 +135,10 @@ export const AppContextProvider = ({ children }) => {
       } catch (e) {
         message.error(e.message || "Неизвестная ошибка удаления");
       } finally {
-        fetchProducts();
+        await fetchAll();
       }
     },
-    [fetchProducts]
+    [fetchAll]
   );
 
   const deleteProduct = useCallback(
@@ -90,31 +156,24 @@ export const AppContextProvider = ({ children }) => {
         });
 
         if (!response.ok) {
-          if (response.status === 401) {
-            message.error(response.error);
-          }
+          return await handleNotOkReponse(response);
         }
+
         const json = await response.json();
 
         message.success(json.data.message);
       } catch (e) {
         message.error(e.message || "Неизвестная ошибка удаления");
       } finally {
-        fetchProducts();
+        fetchAll();
       }
     },
-    [fetchProducts]
+    [fetchAll]
   );
 
   useEffect(() => {
-    try {
-      fetchProducts();
-    } catch (e) {
-      message.error(e.message || "Ошибка инициализации приложения");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [fetchProducts]);
+    fetchAll();
+  }, [fetchAll]);
 
   return (
     <AppContext.Provider
@@ -123,9 +182,20 @@ export const AppContextProvider = ({ children }) => {
         isLoading,
         addProduct,
         deleteProduct,
+        fetchPopularityReport,
+        fetchRevenueReport,
+        popularityReport,
+        revenueReport,
       }}
     >
       {children}
     </AppContext.Provider>
   );
 };
+
+async function handleNotOkReponse(response) {
+  const json = await response.json();
+  const errorMessage =
+    get(json, "error.message") || response.statusText || "Произошла ошибка";
+  message.error(errorMessage);
+}

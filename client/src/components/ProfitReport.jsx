@@ -27,7 +27,7 @@ ChartJS.register(
   Legend
 );
 
-export default function PieReport() {
+export default function ProfitReport() {
   const { popularityReport } = useAppContext();
 
   const data = useMemo(() => {
@@ -35,8 +35,11 @@ export default function PieReport() {
       labels: map(popularityReport, ({ _id }) => _id),
       datasets: [
         {
-          label: "Анализ популярности продуктов",
-          data: map(popularityReport, ({ count }) => count),
+          label: "Анализ прибыльности продуктов",
+          data: map(
+            popularityReport,
+            ({ profit: { $numberDecimal } }) => $numberDecimal
+          ),
           backgroundColor: [
             "rgba(255, 99, 132, 0.2)",
             "rgba(54, 162, 235, 0.2)",

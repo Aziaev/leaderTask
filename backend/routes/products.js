@@ -3,8 +3,8 @@ const router = Router();
 const Product = require("../models/Product");
 const { check, validationResult } = require("express-validator");
 const { HTTP_STATUSES } = require("../constants");
-const mockData = require("../mockData.json");
-const { map } = require("lodash");
+const { reduce, sortBy } = require("lodash");
+const { format, parse } = require("date-fns");
 
 router.get("/", async (request, response) => {
   try {
@@ -25,21 +25,70 @@ router.get("/", async (request, response) => {
   }
 });
 
-router.get("/report", async (request, response) => {
+router.get("/report/popularity", async (request, response) => {
   try {
-    const list = await Product.find().sort({ createDate: "asc" });
-
-    if (list.length < 0) {
-      await map(mockData, async (item) => {
-        const product = new Product(item);
-
-        await product.save();
-      });
-    }
+    const report = await Product.aggregate([
+      {
+        $group: {
+          _id: "$product",
+          profit: { $sum: "$profit" },
+          price: { $sum: "$price" },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
 
     response.status(HTTP_STATUSES["200"]).json({
       data: {
-        list,
+        report,
+      },
+    });
+  } catch (e) {
+    response.status(HTTP_STATUSES["500"]).json({
+      error: {
+        message: e.message || "Что-то пошло не так, попробуйте снова",
+        status: HTTP_STATUSES["500"],
+      },
+    });
+  }
+});
+
+router.get("/report/revenue", async (request, response) => {
+  try {
+    const list = await Product.aggregate([
+      {
+        $group: {
+          _id: { month: { $month: "$date" }, year: { $year: "$date" } },
+          profit: { $sum: "$profit" },
+          price: { $sum: "$price" },
+        },
+      },
+    ]);
+
+    const listWithLabels = reduce(
+      list,
+      (result, { _id: { year, month }, profit, price }) => {
+        const label = format(new Date(year, month - 1), "LL`yy");
+
+        return [
+          ...result,
+          {
+            label,
+            profit,
+            price,
+          },
+        ];
+      },
+      []
+    );
+
+    const report = sortBy(listWithLabels, ({ label }) => {
+      return parse(label, "LL`yy", new Date());
+    });
+
+    response.status(HTTP_STATUSES["200"]).json({
+      data: {
+        report,
       },
     });
   } catch (e) {

@@ -9,9 +9,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { format, parse, parseISO } from "date-fns";
-import { ru } from "date-fns/locale";
-import { keys, reduce } from "lodash";
+import { map } from "lodash";
 import React, { useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import { useAppContext } from "../AppContext";
@@ -30,50 +28,19 @@ ChartJS.register(
 );
 
 export default function LineReport() {
-  const { products } = useAppContext();
+  const { revenueReport } = useAppContext();
 
-  const data2 = useMemo(() => {
-    const groupedData = reduce(
-      products,
-      (result, { date, profit, price }) => {
-        const label = format(parseISO(date), "LL`yy", {
-          locale: ru,
-        });
-
-        if (result[label]) {
-          return (result[label] = {
-            ...result,
-            [label]: {
-              profit: result[label].profit + parseFloat(profit.$numberDecimal),
-              price: result[label].price + parseFloat(price.$numberDecimal),
-            },
-          });
-        }
-
-        return {
-          ...result,
-          [label]: {
-            profit: parseFloat(profit.$numberDecimal),
-            price: parseFloat(price.$numberDecimal),
-          },
-        };
-      },
-      {}
-    );
-
-    const graphLabels = keys(groupedData).sort((a, b) => {
-      const dateA = parse(a, "LL`yy", new Date());
-      const dateB = parse(b, "LL`yy", new Date());
-
-      return dateA > dateB ? 1 : -1;
-    });
+  const data = useMemo(() => {
+    const labels = map(revenueReport, ({ label }) => label);
 
     return {
-      labels: graphLabels,
+      labels,
       datasets: [
         {
           label: "Прибыль",
-          data: graphLabels.map((label) => groupedData[label].profit),
+          data: revenueReport.map(
+            ({ profit: { $numberDecimal } }) => $numberDecimal
+          ),
           borderColor: "rgb(255, 99, 132)",
           backgroundColor: "rgba(255, 99, 132, 0.5)",
           fill: false,
@@ -82,7 +49,9 @@ export default function LineReport() {
         },
         {
           label: "Выручка",
-          data: graphLabels.map((label) => groupedData[label].price),
+          data: revenueReport.map(
+            ({ price: { $numberDecimal } }) => $numberDecimal
+          ),
           borderColor: "rgb(53, 162, 235)",
           backgroundColor: "rgba(53, 162, 235, 0.5)",
           fill: false,
@@ -91,9 +60,9 @@ export default function LineReport() {
         },
       ],
     };
-  }, [products]);
+  }, [revenueReport]);
 
-  return <Line options={options} data={data2} />;
+  return <Line options={options} data={data} />;
 }
 
 const options = {
